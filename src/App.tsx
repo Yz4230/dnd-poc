@@ -5,7 +5,7 @@ import AccountCard from "./components/AccountCard";
 import Draggable from "./components/Draggable";
 import { mockAccounts } from "./mocks";
 
-import type { Account } from "./type";
+import type { Account, Position, Rect } from "./type";
 
 const Main = styled.div({
   width: "100vw",
@@ -26,9 +26,9 @@ const List = styled.div({
 
 type DragObject = {
   account: Account;
-  bound: { width: number; height: number };
-  offset: { x: number; y: number };
-  initial: { x: number; y: number };
+  rect: Rect;
+  offset: Position;
+  initial: Position;
 };
 
 function App() {
@@ -40,7 +40,7 @@ function App() {
     const offset = { x: e.clientX - bound.x, y: e.clientY - bound.y };
     const initial = { x: e.clientX, y: e.clientY };
 
-    setDragObject({ account, bound, offset, initial });
+    setDragObject({ account, rect: bound, offset, initial });
   };
 
   const handleMouseEnter = (account: Account) => {
@@ -73,7 +73,7 @@ function App() {
         ))}
         {dragObject && (
           <Draggable
-            bound={dragObject.bound}
+            rect={dragObject.rect}
             offset={dragObject.offset}
             initial={dragObject.initial}
           >

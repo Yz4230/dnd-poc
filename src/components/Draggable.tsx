@@ -1,14 +1,15 @@
 import useMousePosition from "../hooks/useMousePosition";
 
+import type { Position, Rect } from "../type";
 import type { FC } from "react";
 
 type Props = {
-  bound: { width: number; height: number };
-  offset: { x: number; y: number };
-  initial: { x: number; y: number };
+  rect: Rect;
+  offset: Position;
+  initial: Position;
 };
 
-const Draggable: FC<Props> = ({ children, bound, offset, initial }) => {
+const Draggable: FC<Props> = ({ children, rect, offset, initial }) => {
   const mouse = useMousePosition(initial);
 
   return (
@@ -19,8 +20,8 @@ const Draggable: FC<Props> = ({ children, bound, offset, initial }) => {
         pointerEvents: "none",
       }}
       style={{
-        width: bound.width,
-        height: bound.height,
+        width: rect.width,
+        height: rect.height,
         left: mouse.x - (offset.x ?? 0),
         top: mouse.y - (offset.y ?? 0),
       }}

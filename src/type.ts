@@ -6,3 +6,13 @@ export type Account = {
   gender: string;
   ip_address: string;
 };
+
+export type Position = {
+  x: number;
+  y: number;
+};
+
+export type Rect = {
+  width: number;
+  height: number;
+};

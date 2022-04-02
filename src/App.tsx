@@ -1,27 +1,87 @@
 import styled from "@emotion/styled";
+import { useState } from "react";
 
-import logo from "./assets/logo.svg";
+import AccountCard from "./components/AccountCard";
+import Draggable from "./components/Draggable";
+import { mockAccounts } from "./mocks";
 
-const Container = styled.div({
+import type { Account } from "./type";
+
+const Main = styled.div({
   width: "100vw",
-  height: "100vh",
+  minHeight: "100vh",
   display: "flex",
-  flexFlow: "column",
   justifyContent: "center",
   alignItems: "center",
 });
 
-const Logo = styled.img({
-  width: "32em",
-  aspectRatio: "1/1",
+const List = styled.div({
+  width: "30em",
+  padding: "0.5em",
+  border: "1px solid lightgray",
+  display: "flex",
+  flexFlow: "column",
+  gap: "0.5em",
 });
 
+type DragObject = {
+  account: Account;
+  bound: { width: number; height: number };
+  offset: { x: number; y: number };
+  initial: { x: number; y: number };
+};
+
 function App() {
+  const [accounts, setAccounts] = useState(() => mockAccounts.slice(0, 5));
+  const [dragObject, setDragObject] = useState<DragObject | null>(null);
+
+  const handleMouseDown = (e: React.MouseEvent, account: Account) => {
+    const bound = e.currentTarget.getBoundingClientRect();
+    const offset = { x: e.clientX - bound.x, y: e.clientY - bound.y };
+    const initial = { x: e.clientX, y: e.clientY };
+
+    setDragObject({ account, bound, offset, initial });
+  };
+
+  const handleMouseEnter = (account: Account) => {
+    if (dragObject) {
+      const newAccounts = accounts.filter((a) => a.id !== account.id);
+      newAccounts.splice(accounts.indexOf(dragObject.account), 0, account);
+      setAccounts(newAccounts);
+    }
+  };
+
   return (
-    <Container>
-      <h1>React Boilerplate</h1>
-      <Logo src={logo} alt="logo" />
-    </Container>
+    <Main>
+      <List
+        css={[{ position: "relative" }, dragObject && { cursor: "grabbing" }]}
+        onMouseUp={() => setDragObject(null)}
+      >
+        {accounts.map((account) => (
+          <div
+            key={account.id}
+            css={[
+              { display: "grid", cursor: "grab" },
+              account && { userSelect: "none" },
+              dragObject?.account.id === account.id && { visibility: "hidden" },
+            ]}
+            onMouseDown={(e) => handleMouseDown(e, account)}
+            onMouseEnter={() => handleMouseEnter(account)}
+          >
+            <AccountCard account={account} />
+          </div>
+        ))}
+        {dragObject && (
+          <Draggable
+            bound={dragObject.bound}
+            offset={dragObject.offset}
+            initial={dragObject.initial}
+          >
+            <AccountCard account={dragObject.account} />
+          </Draggable>
+        )}
+      </List>
+    </Main>
   );
 }
 

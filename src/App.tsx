@@ -62,7 +62,7 @@ function App() {
             key={account.id}
             css={[
               { display: "grid", cursor: "grab" },
-              account && { userSelect: "none" },
+              dragObject && { userSelect: "none" },
               dragObject?.account.id === account.id && { visibility: "hidden" },
             ]}
             onMouseDown={(e) => handleMouseDown(e, account)}
